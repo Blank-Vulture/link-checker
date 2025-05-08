@@ -8,7 +8,13 @@ export function calculateDelay(rtt: number): number {
   }
   
   export function smartDelay(url: string, rtt: number): number {
-    if (url.includes("researchgate.net")) return 4000;
+    try {
+      const parsedUrl = new URL(url);
+      const allowedHosts = ['researchgate.net', 'www.researchgate.net'];
+      if (allowedHosts.includes(parsedUrl.host)) return 4000;
+    } catch (e) {
+      console.warn(`Invalid URL: ${url}`, e);
+    }
     if (url.endsWith(".pdf") && rtt < 500) return 2000;
     return calculateDelay(rtt);
   }
